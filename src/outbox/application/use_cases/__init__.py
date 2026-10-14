@@ -1,0 +1,1 @@
+"""Outbox application use cases."""
