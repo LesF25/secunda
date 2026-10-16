@@ -19,25 +19,24 @@ class NotificationUnknownError(Exception):
 
 
 async def notification_response_handler(response: aiohttp.ClientResponse) -> Any:
-    async with response:
-        status_code = response.status
+    status_code = response.status
 
-        if response.ok:
-            try:
-                return await response_to_json(response)
-            except UnknownError as exc:
-                logger.warning('Response parsing failed', error=str(exc))
-                return None
+    if response.ok:
+        try:
+            return await response_to_json(response)
+        except UnknownError as exc:
+            logger.warning('Response parsing failed', error=str(exc))
+            return None
 
-        response_text = await response.text()
-        logger.error(
-            'Webhook service unknown error',
-            status_code=status_code,
-            response=response_text[:1000],
-        )
-        raise NotificationUnknownError(
-            f'Unexpected error: {status_code}, {response_text[:1000]}'
-        )
+    response_text = await response.text()
+    logger.error(
+        'Webhook service unknown error',
+        status_code=status_code,
+        response=response_text[:1000],
+    )
+    raise NotificationUnknownError(
+        f'Unexpected error: {status_code}, {response_text[:1000]}'
+    )
 
 
 class WebhookNotificationClient:
